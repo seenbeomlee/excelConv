@@ -140,10 +140,19 @@ public class ExcelTest {
 
 
                         /* length check */
+                        if(block.contains("@Length")) {
+                            length = StringUtils.substringBetween(block, "max=", ")");
+                        }
 
                         /* PK check */
+                        if(block.contains("@Id")) {
+                            PK = "PK";
+                        }
 
                         /* FK check */
+                        if(block.contains("@JoinColumn")) {
+                            FK = "FK";
+                        }
 
                         System.out.println("this is columnName: " + columnName);
                         System.out.println("this is columnKName: " + columnKName);
