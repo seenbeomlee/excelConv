@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/poi-4.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/commons-lang3-3.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/poi-examples-4.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/poi-4.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/poi-excelant-4.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/poi-examples-4.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -37,7 +37,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/poi-ooxml-4.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/poi-excelant-4.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -46,7 +46,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/poi-ooxml-schemas-4.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/poi-ooxml-4.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -55,7 +55,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/poi-scratchpad-4.1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/poi-ooxml-schemas-4.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -64,7 +64,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/ooxml-lib/curvesapi-1.06.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/poi-scratchpad-4.1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -73,7 +73,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/ooxml-lib/xmlbeans-3.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/ooxml-lib/curvesapi-1.06.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -82,34 +82,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/commons-collections4-4.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/lib/commons-collections4-4.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/poi-bin-4.1.2-20200217/poi-4.1.2/lib/commons-compress-1.19.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/commons-lang3-3.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../intelliJ Library/poi-bin-4.1.2-20200217/poi-4.1.2/ooxml-lib/xmlbeans-3.1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

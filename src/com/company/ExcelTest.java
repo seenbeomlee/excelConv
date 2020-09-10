@@ -20,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.Vector;
+import java.util.Iterator;
 
 class TableData{
 
@@ -63,12 +64,21 @@ class TableData{
     public String getFK() {
         return FK;
     }
+
+    public void print() {
+        System.out.println("this is columnName: " + columnName);
+        System.out.println("this is columnKName: " + columnKName);
+        System.out.println("this is isNull: " + isNull);
+        System.out.println("this is dataType: " + dataType);
+        System.out.println("this is length: " + length);
+        System.out.println("this is PK: " + PK);
+        System.out.println("this is FK: " + FK);
+    }
 }
 
 public class ExcelTest {
     public static final String projectPath = System.getProperty("user.dir");
     public static void main(String[] args) throws Exception {
-        Vector<TableData> vector = new Vector<TableData>(); // Vector for get Data
         String sheet_name = "fmsEntitySheet";
         try {
             File dirFile = new File(projectPath+"\\entity\\"); // Project folder > Entity folder
@@ -76,6 +86,8 @@ public class ExcelTest {
             int indexOfFirst = 0;
             for(File tempFile : fileList) {
                 if(tempFile.isFile()) {
+                    Vector<TableData> newBlockVector = new Vector<TableData>(); // Vector for get Data
+
                     String fileName = tempFile.getName();
                     String filePath = tempFile.getAbsolutePath();
                     System.out.println(fileName + filePath);
@@ -119,7 +131,6 @@ public class ExcelTest {
                         String length = "";
                         String PK = "";
                         String FK = "";
-                        TableData newBlock = new TableData();
 
                         /* columnName and dataType check */
                         String dataTypeAndcolumnName = StringUtils.substringBetween(block, "private ", ";");
@@ -130,7 +141,14 @@ public class ExcelTest {
 
                         /* columnKName check */
                         if(block.contains("@ApiModelProperty")) {
-                            columnKName = StringUtils.substringBetween(block, "@ApiModelProperty(value=", ")").replace("\"", "");
+                            String line = StringUtils.substringBetween(block, "@ApiModelProperty", ")");
+                            if(line.contains("required")) {
+                                columnKName = StringUtils.substringBetween(line, "required=true", "\"").replace("\"", "");
+                            }
+                            else {
+                                columnKName = StringUtils.substringBetween(block, "(value=", ")").replace("\"", "");
+                            }
+
                         }
 
                         /* isNull check */
@@ -154,18 +172,22 @@ public class ExcelTest {
                             FK = "FK";
                         }
 
-                        System.out.println("this is columnName: " + columnName);
-                        System.out.println("this is columnKName: " + columnKName);
-                        System.out.println("this is isNull: " + isNull);
-                        System.out.println("this is dataType: " + dataType);
-                        System.out.println("this is length: " + length);
-                        System.out.println("this is PK: " + PK);
-                        System.out.println("this is FK: " + FK);
+                        TableData newBlock = new TableData(columnName, columnKName, isNull, dataType, length, PK, FK);
+                        newBlockVector.add(newBlock);
+                    } // block search
+                    /* render it to excel file */
+                    Iterator<TableData> iter = newBlockVector.iterator();
+                    TableData temp;
 
+                    while(iter.hasNext()) {
+                        System.out.println("=============new block==============");
+                        temp = iter.next();
+                        temp.print();
                     }
                     br.close();
-                }
-            }
+                    /* render it to excel file */
+                } // entity.java
+            } // entity.java
         } catch (Exception e) {
             e.printStackTrace();
         }
