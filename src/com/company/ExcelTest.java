@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.FileOutputStream;
 
 
@@ -19,6 +18,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.Vector;
 import java.util.Iterator;
+
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 
 class TableData{
 
@@ -74,22 +76,37 @@ class TableData{
     }
 }
 
+
 public class ExcelTest {
     public static final String projectPath = System.getProperty("user.dir");
     public static void main(String[] args) throws Exception {
-        //.xls 확장자 지원
+
+        /* jsmooth로 exe 파일 만들어 실행 시, 한글이 깨지는 현상 방지 */
+        System.setProperty("file.encoding","UTF-8");
+        try{
+            Field charset = Charset.class.getDeclaredField("defaultCharset");
+            charset.setAccessible(true);
+            charset.set(null,null);
+        }
+        catch(Exception e){
+
+        }
+
+        /* .xls 확장자 지원 */
         HSSFWorkbook wb = null;
         HSSFSheet sheet = null;
         Row row = null;
         Cell cell = null;
 
-        //.xlsx 확장자 지원
+        /* .xlsx 확장자 지원 */
         XSSFWorkbook xssfWb = null; // .xlsx
         XSSFSheet xssfSheet = null; // .xlsx
         XSSFRow xssfRow = null; // .xlsx
         XSSFCell xssfCell = null;// .xlsx
 
-        String file_name = "fmsEntitySheet";
+        /* excel 파일 이름 */
+        String excelFileName = "FMS";
+
         try {
             File dirFile = new File(projectPath+"\\entity\\"); // Project folder > Entity folder
             File[] fileList = dirFile.listFiles();// fileLists, inside of Entity folder
@@ -103,7 +120,7 @@ public class ExcelTest {
             font.setFontName(HSSFFont.FONT_ARIAL); //폰트스타일
             font.setFontHeightInPoints((short)14); //폰트크기
             font.setBold(true); //Bold 유무
-            /* 워크시트 이름 if inside of 'for' then make it => "xxx.java" if not => "FMS"*/
+            /* 워크시트 이름 if inside of 'for' then make it => "xxx.java" if not => "FMS Table"*/
             xssfSheet = xssfWb.createSheet("FMS Table");
             /* 워크시트 Column size 조절 */
             xssfSheet.setColumnWidth(0, (xssfSheet.getColumnWidth(0))+(short)4096); // 0번째 컬럼(테이블명) 넓이 조절
@@ -116,8 +133,8 @@ public class ExcelTest {
             xssfSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 10));
             /* 테이블 타이틀 스타일 설정 */
             CellStyle cellStyle_Title = xssfWb.createCellStyle();
-            cellStyle_Title.setAlignment(HorizontalAlignment.CENTER); // 수평 가운데 정렬
-            cellStyle_Title.setFont(font); // cellStyle에 font 적용
+            cellStyle_Title.setAlignment(HorizontalAlignment.CENTER); // cellStyle_Title 내용물 수평 가운데 정렬
+            cellStyle_Title.setFont(font); // cellStyle_Title에 font 적용
 
             /* 테이블 헤더 스타일 설정 */
             CellStyle cellStyle_Header = xssfWb.createCellStyle();
@@ -174,14 +191,18 @@ public class ExcelTest {
                     xssfCell.setCellStyle(cellStyle_Header);
                     xssfCell.setCellValue("설명");
                     /* 테이블 헤더 추가 */
+
                     xssfRow = xssfSheet.createRow(rowNo++);
 
                     Vector<TableData> newBlockVector = new Vector<TableData>(); // Vector for get Data
 
+                    /* 현재 읽고 있는 .java 파일 이름 */
                     String fileName = tempFile.getName();
+                    /* 현재 읽고 있는 .java 파일 절대경로 */
                     String filePath = tempFile.getAbsolutePath();
                     System.out.println(fileName + filePath);
 
+                    /* 테이블명 === xxx.java에서 'xxx' */
                     String tableName = fileName.substring(0, fileName.indexOf(".java"));
                     String tableKName = "";
                     BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -189,15 +210,18 @@ public class ExcelTest {
                     while(true) {
                         String line = br.readLine();
                         if (line.contains("class")) break;
+                        /* if .java file contains "@ApiModel" then it has tableKName */
                         if (line.contains("@ApiModel")) {
                             indexOfFirst = line.indexOf('"');
                             tableKName = line.substring(indexOfFirst+1, line.indexOf('"', indexOfFirst+1));
                         }
                     }
 
+                    /* for Test */
                     System.out.println(tableName);
                     System.out.println(tableKName);
 
+                    /* text Block */
                     StringBuffer sb = new StringBuffer();
 
                     while(true) {
@@ -206,12 +230,11 @@ public class ExcelTest {
                         sb.append(line).append("\n");
                     }
 
+                    /* block is separated by '\n' */
                     String[] blocks = sb.toString().split("\n\n");
 
                     for(String block : blocks) {
                         if(!block.contains("private")) continue;
-
-//                        System.out.println("this is block: " + block);
 
                         /* blockInit() */
                         String columnName = "";
@@ -233,7 +256,7 @@ public class ExcelTest {
                         if(block.contains("@ApiModelProperty")) {
                             String line = StringUtils.substringBetween(block, "@ApiModelProperty", ")");
                             if(line.contains("required")) {
-                                columnKName = StringUtils.substringBetween(line, "required=true", "\"").replace("\"", "");
+                                columnKName = StringUtils.substringBetween(line, "required=true,value=", "\"").replace("\"", "");
                             }
                             else {
                                 columnKName = StringUtils.substringBetween(block, "(value=", ")").replace("\"", "");
@@ -301,7 +324,7 @@ public class ExcelTest {
                     cellStyle_Table_Center_br.setBorderBottom(BorderStyle.THIN); //테두리 아래쪽
                     cellStyle_Table_Center_br.setBorderRight(BorderStyle.THIN); //테두리 오른쪽
 
-                    /* 셀 병합 (테이블 명, 테이블 한글명) */
+                    /* 셀 병합 (테이블 명, 테이블 한글명을 위한) */
                     xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + newBlockVector.size() - 2, 0, 0));
                     xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + newBlockVector.size() - 2, 1, 1));
 
@@ -368,7 +391,7 @@ public class ExcelTest {
                     /* render it to excel file */
                 } // entity.java
             } // entity.java
-            String localFile = "C:\\Users\\diehs\\Documents\\sstree\\excelConv\\" + "FMS" + ".xlsx";
+            String localFile = projectPath + "\\" + excelFileName + ".xlsx";
 
             File file = new File(localFile);
             FileOutputStream fos = null;
@@ -377,9 +400,6 @@ public class ExcelTest {
 
             if (xssfWb != null)	xssfWb.close();
             if (fos != null) fos.close();
-
-            //ctx.put("FILENAME", "입고상세출력_"+ mapList.get(0).get("PRINT_DATE"));
-            //if(file != null) file.deleteOnExit();
         } catch (Exception e) {
             e.printStackTrace();
         }
