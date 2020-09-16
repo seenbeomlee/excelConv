@@ -152,6 +152,8 @@ public class ExcelTest {
         private String projectPath;
         private String excelFileName;
         private String localFile;
+        private String fileName;
+        private String filePath;
 
         private HSSFWorkbook wb;
         private HSSFSheet sheet;
@@ -195,6 +197,14 @@ public class ExcelTest {
             fileList = dirFile.listFiles();// fileLists, inside of Entity folder
         }
 
+        public void updateFilePathAndFileName(File tempFile) {
+            /* 현재 읽고 있는 .java 파일 이름 */
+            fileName = tempFile.getName();
+            /* 현재 읽고 있는 .java 파일 절대경로 */
+            filePath = tempFile.getAbsolutePath();
+            System.out.println(fileName + filePath);
+        }
+
         public File[] getFileList() {
             return fileList;
         }
@@ -213,6 +223,14 @@ public class ExcelTest {
 
         public XSSFCell getXssfCell() {
             return xssfCell;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public String getFilePath() {
+            return filePath;
         }
 
         public void initExcelSheet(String fileName) {
@@ -265,12 +283,8 @@ public class ExcelTest {
     }
 
     public static class LineReader {
-
-        private String line;
         private String word[];
 
-        private String fileName;
-        private String filePath;
         private String tableName;
         private String tableKName;
 
@@ -285,31 +299,21 @@ public class ExcelTest {
         LineReader() {
         }
 
-        LineReader(File tempFile) {
-            /* 현재 읽고 있는 .java 파일 이름 */
-            fileName = tempFile.getName();
-            /* 현재 읽고 있는 .java 파일 절대경로 */
-            filePath = tempFile.getAbsolutePath();
-            System.out.println(fileName + filePath);
+        LineReader(String fileName) {
+            try {
+                tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
+                tableKName = "";
 
-            tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
-            tableKName = "";
+                columnName = "";
+                columnKName = "";
+                isNull = "Y";
+                dataType = "";
+                length = "";
+                PK = "";
+                FK = "";
+            } catch (Exception e) {
 
-            columnName = "";
-            columnKName = "";
-            isNull = "Y";
-            dataType = "";
-            length = "";
-            PK = "";
-            FK = "";
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getFilePath() {
-            return filePath;
+            }
         }
 
         public void blockInit() {
@@ -322,7 +326,7 @@ public class ExcelTest {
             FK = "";
         }
 
-        public RowData getPrivate(String line) {
+        public RowData casePrivate(String line) {
             String dataTypeAndcolumnName = StringUtils.substringBetween(line, "private ", ";");
             dataType = dataTypeAndcolumnName.substring(0, dataTypeAndcolumnName.indexOf(" "));
             columnName = dataTypeAndcolumnName.substring(dataTypeAndcolumnName.indexOf(" "));
@@ -333,7 +337,7 @@ public class ExcelTest {
             return rowData;
         }
 
-        public void getElse(String line) {
+        public void caseElse(String line) {
             word = line.split("\\(|/");
 
             switch (word[0]) {
@@ -390,30 +394,33 @@ public class ExcelTest {
             for (File tempFile : excelFile.getFileList()) {
                 if (tempFile.isFile()) {
 
-                    LineReader lineReader = new LineReader(tempFile);
+                    TableData tableData = new TableData();
 
-                    excelFile.initExcelSheet(lineReader.getFileName());
+                    /* Update excelSheet */
+                    excelFile.updateFilePathAndFileName(tempFile);
+                    excelFile.initExcelSheet(excelFile.getFileName());
                     excelFile.createTitle();
 
-                    BufferedReader br = new BufferedReader(new java.io.FileReader(lineReader.getFilePath()));
-
-                    TableData tableData = new TableData();
+                    /* for Read Lines */
+                    LineReader lineReader = new LineReader();
+                    BufferedReader br = new BufferedReader(new java.io.FileReader(excelFile.getFilePath()));
 
                     while (true) {
                         String line = br.readLine();
                         if (line == null) break;
 
                         if (line.contains("private")) {
-                            tableData.pushRowData(lineReader.getPrivate(line));
+                            tableData.pushRowData(lineReader.casePrivate(line));
                             continue;
                         } else {
                             /* if line has space, we cannot bring a content what we want */
                             line = line.replace(" ", "");
-                            lineReader.getElse(line);
+                            lineReader.caseElse(line);
                         }
                     }
-                    tableData.printExcel(excelFile.getXssfWb(), excelFile.getXssfSheet(), excelFile.getXssfRow(), excelFile.getXssfCell());
                     br.close();
+
+                    tableData.printExcel(excelFile.getXssfWb(), excelFile.getXssfSheet(), excelFile.getXssfRow(), excelFile.getXssfCell());
                 }
             }
             excelFile.saveExcelFile();
