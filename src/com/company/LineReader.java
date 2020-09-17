@@ -36,17 +36,21 @@ public class LineReader {
     FK = "";
   }
 
-  public RowData casePrivate(String line) {
-    String dataTypeAndcolumnName = StringUtils.substringBetween(line, "private ", ";");
+  public RowData casePrivate(String line) throws Exception {
+    try {
+      String dataTypeAndcolumnName = StringUtils.substringBetween(line, "private ", ";");
 
-    dataType = dataTypeAndcolumnName.substring(0, dataTypeAndcolumnName.indexOf(" "));
-    columnName = dataTypeAndcolumnName.substring(dataTypeAndcolumnName.indexOf(" "));
+      dataType = dataTypeAndcolumnName.substring(0, dataTypeAndcolumnName.indexOf(" "));
+      columnName = dataTypeAndcolumnName.substring(dataTypeAndcolumnName.indexOf(" "));
 
-    /* return RowData and push it to TableData's List<RowData> Rows */
-    RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
+      /* return RowData and push it to TableData's List<RowData> Rows */
+      RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
 
-    blockInit();
-    return rowData;
+      blockInit();
+      return rowData;
+    } catch (Exception e) {
+      throw new Exception(line, e);
+    }
   }
 
   public void caseElse(String line) throws Exception {

@@ -17,15 +17,19 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        String projectPath = args[0];
-        if(projectPath.isEmpty()) {
-            err
-        }
-        /* jsmooth로 exe 파일 만들어 실행 시, 한글이 깨지는 현상 방지 */
-        jsmoothSetting();
+        try {
+            String projectPath = args[0];
+            if (projectPath.isEmpty()) {
+                throw new Exception();
+            }
+            /* jsmooth로 exe 파일 만들어 실행 시, 한글이 깨지는 현상 방지 */
+            jsmoothSetting();
 
-        ExcelFile excelFile = new ExcelFile(projectPath);
-        excelFile.execute();
+            ExcelFile excelFile = new ExcelFile(projectPath);
+            excelFile.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

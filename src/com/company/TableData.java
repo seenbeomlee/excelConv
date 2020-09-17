@@ -32,49 +32,63 @@ public class TableData {
     return rows.size();
   }
 
-  private void printHeaders(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) {
-    /* 테이블 헤더 스타일 설정 */
-    CellStyle cellStyle_Header = xssfWb.createCellStyle();
-    cellStyle_Header.setBorderTop(BorderStyle.THIN); //테두리 위쪽
-    cellStyle_Header.setBorderBottom(BorderStyle.THIN); //테두리 아래쪽
-    cellStyle_Header.setBorderLeft(BorderStyle.THIN); //테두리 왼쪽
-    cellStyle_Header.setBorderRight(BorderStyle.THIN); //테두리 오른쪽
-    cellStyle_Header.setAlignment(HorizontalAlignment.CENTER); // 수평 가운데 정렬
+  private void printHeaders(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) throws Exception {
+    try {
+      /* 테이블 헤더 스타일 설정 */
+      CellStyle cellStyle_Header = xssfWb.createCellStyle();
+      cellStyle_Header.setBorderTop(BorderStyle.THIN); //테두리 위쪽
+      cellStyle_Header.setBorderBottom(BorderStyle.THIN); //테두리 아래쪽
+      cellStyle_Header.setBorderLeft(BorderStyle.THIN); //테두리 왼쪽
+      cellStyle_Header.setBorderRight(BorderStyle.THIN); //테두리 오른쪽
+      cellStyle_Header.setAlignment(HorizontalAlignment.CENTER); // 수평 가운데 정렬
 
-    /* 테이블 헤더 추가 */
-    for (int i = 0; i < headers.length; i++) {
-      xssfCell = xssfRow.createCell((short) i);
-      xssfCell.setCellStyle(cellStyle_Header);
-      xssfCell.setCellValue(headers[i]);
+      /* 테이블 헤더 추가 */
+      for (int i = 0; i < headers.length; i++) {
+        xssfCell = xssfRow.createCell((short) i);
+        xssfCell.setCellStyle(cellStyle_Header);
+        xssfCell.setCellValue(headers[i]);
+      }
+    } catch (Exception e) {
+      throw new Exception(e);
     }
-    ;
   }
 
-  private void printBody(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) {
+  private void printBody(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) throws Exception {
+    try {
+      /* 셀 병합 (테이블 명, 테이블 한글명을 위한) */
+      xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + rows.size() - 2, 0, 0));
+      xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + rows.size() - 2, 1, 1));
 
-    /* 셀 병합 (테이블 명, 테이블 한글명을 위한) */
-    xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + rows.size() - 2, 0, 0));
-    xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + rows.size() - 2, 1, 1));
+      /* 병합 셀 스타일 설정 */
+      CellStyle blockMergeCellStyle = xssfWb.createCellStyle();
+      blockMergeCellStyle.setAlignment(HorizontalAlignment.CENTER);
+      blockMergeCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-    /* 병합 셀 스타일 설정 */
-    CellStyle blockMergeCellStyle = xssfWb.createCellStyle();
-    blockMergeCellStyle.setAlignment(HorizontalAlignment.CENTER);
-    blockMergeCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+      /* 일반 셀 스타일 설정 */
+      CellStyle blockCellStyle = xssfWb.createCellStyle();
 
-    /* 일반 셀 스타일 설정 */
-    CellStyle blockCellStyle = xssfWb.createCellStyle();
+      /* write cell */
+      for (RowData row : rows) {
+        try {
+          row.printRowData(xssfRow, xssfCell, blockMergeCellStyle, blockCellStyle);
+          xssfRow = xssfSheet.createRow(rowNo++);
+        } catch (Exception e) {
+          throw new Exception(row.toString(), e);
+        }
+      }
+    } catch (Exception e) {
+      throw new Exception(e);
+    }
+  }
 
-    /* write cell */
-    for (RowData row : rows) {
-      row.printRowData(xssfRow, xssfCell, blockMergeCellStyle, blockCellStyle);
+  public void printExcel(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) throws Exception {
+    try {
       xssfRow = xssfSheet.createRow(rowNo++);
+      printHeaders(xssfWb, xssfSheet, xssfRow, xssfCell);
+      xssfRow = xssfSheet.createRow(rowNo++);
+      printBody(xssfWb, xssfSheet, xssfRow, xssfCell);
+    } catch (Exception e) {
+      throw new Exception(e);
     }
-  }
-
-  public void printExcel(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) {
-    xssfRow = xssfSheet.createRow(rowNo++);
-    printHeaders(xssfWb, xssfSheet, xssfRow, xssfCell);
-    xssfRow = xssfSheet.createRow(rowNo++);
-    printBody(xssfWb, xssfSheet, xssfRow, xssfCell);
   }
 }
