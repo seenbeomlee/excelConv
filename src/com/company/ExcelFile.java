@@ -115,7 +115,7 @@ public class ExcelFile {
                 line = line.replace(" ", "");
                 lineReader.caseElse(line);
               } else {
-                if(fields.contains(lineReader.getTableName())){
+                if(fields.contains(lineReader.getColumnName())){
                   tableData.pushRowData(lineReader.casePrivate(line));
                 }
                 continue;

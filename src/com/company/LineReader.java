@@ -29,6 +29,7 @@ public class LineReader {
   }
 
   public String getTableName() { return tableName; }
+  public String getColumnName() { return columnName; }
 
   public void blockInit() {
     columnName = "";
@@ -44,8 +45,8 @@ public class LineReader {
     try {
       String[] dataTypeAndcolumnName = line.split(" ");
 
-      dataType = dataTypeAndcolumnName[1];
-      columnName = dataTypeAndcolumnName[2];
+      dataType = dataTypeAndcolumnName[0];
+      columnName = dataTypeAndcolumnName[1];
 
       /* return RowData and push it to TableData's List<RowData> Rows */
       RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
