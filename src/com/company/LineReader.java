@@ -2,12 +2,16 @@ package com.company;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class LineReader {
   private String word[];
+
+  /* to save reflection fields */
+  private List<String> fields;
 
   private String tableName;
   private String tableKName;
@@ -23,11 +27,17 @@ public class LineReader {
   LineReader() {
   }
 
-  LineReader(String fileName) {
-    tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
-    tableKName = "";
-    /* blockInit elements */
-    blockInit();
+  LineReader(String fileName) throws Exception {
+    try {
+      tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
+      tableKName = "";
+      fields = new ArrayList<String>();
+      /* blockInit elements */
+      blockInit();
+      extractFields();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public String getTableName() { return tableName; }
@@ -43,15 +53,34 @@ public class LineReader {
     FK = "";
   }
 
-  public RowData casePrivate(String line) throws Exception {
+  public void extractFields() {
     try {
-      String[] dataTypeAndcolumnName = line.split(" ");
+      Class c = Class.forName("com.company.entity." + tableName);
+
+      Field[] classField = c.getDeclaredFields();
+
+      for(int i = 0; i < classField.length; i++) {
+        String fieldString = classField[i].toString();
+        fields.add(fieldString.substring(fieldString.lastIndexOf(".")).replace(".", ""));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public RowData caseCheckFields(String line) throws Exception {
+    try {
+      String[] dataTypeAndcolumnName = line.replace(";", "").split(" ");
       List<String> list = new ArrayList<String>(Arrays.asList(dataTypeAndcolumnName));
       list.removeAll(Arrays.asList(""));
       dataTypeAndcolumnName = list.toArray(dataTypeAndcolumnName);
 
-      dataType = dataTypeAndcolumnName[1];
-      columnName = dataTypeAndcolumnName[2].replace(";", "");
+      if(fields.contains(dataTypeAndcolumnName[2])){
+        /* public String Name */
+        /* public String appendName(...) */
+        dataType = dataTypeAndcolumnName[1];
+        columnName = dataTypeAndcolumnName[2];
+      }
 
       /* return RowData and push it to TableData's List<RowData> Rows */
       RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);

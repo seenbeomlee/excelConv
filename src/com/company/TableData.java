@@ -25,7 +25,8 @@ public class TableData {
   }
 
   public void pushRowData(RowData inputVal) {
-    rows.add(inputVal);
+    /* if columnName == "" then, it means fields doesn't have that variable so it did not append it to the inputVal */
+    if(inputVal.getColumnName() != "")  rows.add(inputVal);
   }
 
   public int getSizeOfRows() {

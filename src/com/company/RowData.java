@@ -30,6 +30,8 @@ public class RowData {
   public RowData() {
   }
 
+  public String getColumnName() { return columnName; }
+
   public void printRowData(XSSFRow xssfRow, XSSFCell xssfCell, CellStyle blockMergeCellStyle, CellStyle blockCellStyle) {
     xssfCell = xssfRow.createCell((short) 0);
     xssfCell.setCellStyle(blockMergeCellStyle);

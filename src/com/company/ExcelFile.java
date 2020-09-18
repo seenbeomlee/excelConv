@@ -16,9 +16,6 @@ public class ExcelFile {
   /* to save ExcelFile in to local */
   private String localFile;
 
-  /* to save reflection fields */
-  private List<String> fields;
-
   private HSSFWorkbook wb;
 
   private XSSFWorkbook xssfWb;
@@ -34,6 +31,8 @@ public class ExcelFile {
   ExcelFile(String projectPath) {
     /* 프로젝트 경로 설정 */
     this.projectPath = projectPath;
+
+    /* get packagePath by extracting string after word "src" from our projectpath */
     packagePath = projectPath.split("src")[1];
 
     /* .xls 확장자 지원 */
@@ -50,8 +49,6 @@ public class ExcelFile {
 
     dirFile = new File(this.projectPath); // projectPath == Entity folder
     fileList = dirFile.listFiles();// fileLists, inside of Entity folder
-
-    fields = new ArrayList<String>();
   }
 
   public File[] getFileList() {
@@ -76,21 +73,6 @@ public class ExcelFile {
       if (fos != null) fos.close();
   }
 
-  public void extractFields(String tableName) throws Exception {
-      try {
-        Class c = Class.forName("com.company.entity." + tableName);
-
-        Field[] classField = c.getDeclaredFields();
-
-        for(int i = 0; i < classField.length; i++) {
-          String fieldString = classField[i].toString();
-          fields.add(fieldString.substring(fieldString.lastIndexOf(".")).replace(".", ""));
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-  }
-
   public void execute() {
     try {
       for (File tempFile : getFileList()) {
@@ -111,8 +93,6 @@ public class ExcelFile {
           BufferedReader br = new BufferedReader(new java.io.FileReader(excelSheet.getFilePath()));
           String line = null;
 
-          extractFields(lineReader.getTableName());
-
           /* Read codes line by line */
           while ((line = br.readLine()) != null) {
             try {
@@ -121,14 +101,7 @@ public class ExcelFile {
                 line = line.replace(" ", "");
                 lineReader.caseElse(line);
               } else {
-                String[] dataTypeAndcolumnName = line.split(" ");
-                List<String> list = new ArrayList<String>(Arrays.asList(dataTypeAndcolumnName));
-                list.removeAll(Arrays.asList(""));
-                dataTypeAndcolumnName = list.toArray(dataTypeAndcolumnName);
-
-                if(fields.contains(dataTypeAndcolumnName[2].replace(";", ""))){
-                  tableData.pushRowData(lineReader.casePrivate(line));
-                }
+                  tableData.pushRowData(lineReader.caseCheckFields(line));
                 continue;
               }
             } catch(Exception e) {
