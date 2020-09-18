@@ -2,6 +2,8 @@ package com.company;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 public class LineReader {
   private String word[];
 
@@ -26,6 +28,8 @@ public class LineReader {
     blockInit();
   }
 
+  public String getTableName() { return tableName; }
+
   public void blockInit() {
     columnName = "";
     columnKName = "";
@@ -36,17 +40,21 @@ public class LineReader {
     FK = "";
   }
 
-  public RowData casePrivate(String line) {
-    String dataTypeAndcolumnName = StringUtils.substringBetween(line, "private ", ";");
+  public RowData casePrivate(String line) throws Exception {
+    try {
+      String[] dataTypeAndcolumnName = line.split(" ");
 
-    dataType = dataTypeAndcolumnName.substring(0, dataTypeAndcolumnName.indexOf(" "));
-    columnName = dataTypeAndcolumnName.substring(dataTypeAndcolumnName.indexOf(" "));
+      dataType = dataTypeAndcolumnName[1];
+      columnName = dataTypeAndcolumnName[2];
 
-    /* return RowData and push it to TableData's List<RowData> Rows */
-    RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
+      /* return RowData and push it to TableData's List<RowData> Rows */
+      RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
 
-    blockInit();
-    return rowData;
+      blockInit();
+      return rowData;
+    } catch (Exception e) {
+      throw new Exception(line, e);
+    }
   }
 
   public void caseElse(String line) throws Exception {
