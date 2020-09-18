@@ -76,6 +76,9 @@ public class ExcelFile {
   public void execute() {
     try {
       for (File tempFile : getFileList()) {
+        if(tempFile == null) {
+          throw new Exception();
+        }
         if (tempFile.isFile()) {
           if(tempFile == null) {
             throw new FileNotFoundException();
@@ -106,6 +109,7 @@ public class ExcelFile {
               }
             } catch(Exception e) {
               e.printStackTrace();
+              throw new Exception(line, e);
             }
           }
           br.close();

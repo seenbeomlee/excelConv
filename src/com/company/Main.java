@@ -16,7 +16,11 @@ public class Main {
         }
     }
 
+<<<<<<< HEAD
     public static void main(String[] args)  {
+=======
+    public static void main(String[] args) {
+>>>>>>> 48237918ed15f8e6e0eb00df65f7b4d5dae51fb0
         try {
             String projectPath = args[0];
             if (projectPath.isEmpty()) {

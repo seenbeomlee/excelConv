@@ -53,6 +53,7 @@ public class LineReader {
     FK = "";
   }
 
+<<<<<<< HEAD
   public void extractFields() {
     try {
       Class c = Class.forName("com.company.entity." + tableName);
@@ -85,6 +86,18 @@ public class LineReader {
       /* return RowData and push it to TableData's List<RowData> Rows */
       RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
 
+=======
+  public RowData casePrivate(String line) throws Exception {
+    try {
+      String dataTypeAndcolumnName = StringUtils.substringBetween(line, "private ", ";");
+
+      dataType = dataTypeAndcolumnName.substring(0, dataTypeAndcolumnName.indexOf(" "));
+      columnName = dataTypeAndcolumnName.substring(dataTypeAndcolumnName.indexOf(" "));
+
+      /* return RowData and push it to TableData's List<RowData> Rows */
+      RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
+
+>>>>>>> 48237918ed15f8e6e0eb00df65f7b4d5dae51fb0
       blockInit();
       return rowData;
     } catch (Exception e) {
