@@ -2,6 +2,8 @@ package com.company;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LineReader {
@@ -44,9 +46,12 @@ public class LineReader {
   public RowData casePrivate(String line) throws Exception {
     try {
       String[] dataTypeAndcolumnName = line.split(" ");
+      List<String> list = new ArrayList<String>(Arrays.asList(dataTypeAndcolumnName));
+      list.removeAll(Arrays.asList(""));
+      dataTypeAndcolumnName = list.toArray(dataTypeAndcolumnName);
 
-      dataType = dataTypeAndcolumnName[0];
-      columnName = dataTypeAndcolumnName[1];
+      dataType = dataTypeAndcolumnName[1];
+      columnName = dataTypeAndcolumnName[2].replace(";", "");
 
       /* return RowData and push it to TableData's List<RowData> Rows */
       RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);

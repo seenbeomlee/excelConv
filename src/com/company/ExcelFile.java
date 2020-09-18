@@ -6,15 +6,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.lang.reflect.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ExcelFile {
   private String projectPath;
   private String packagePath;
   private String excelFileName;
-  private List<String> fields;
   /* to save ExcelFile in to local */
   private String localFile;
+
+  /* to save reflection fields */
+  private List<String> fields;
 
   private HSSFWorkbook wb;
 
@@ -73,6 +76,21 @@ public class ExcelFile {
       if (fos != null) fos.close();
   }
 
+  public void extractFields(String tableName) throws Exception {
+      try {
+        Class c = Class.forName("com.company.entity." + tableName);
+
+        Field[] classField = c.getDeclaredFields();
+
+        for(int i = 0; i < classField.length; i++) {
+          String fieldString = classField[i].toString();
+          fields.add(fieldString.substring(fieldString.lastIndexOf(".")).replace(".", ""));
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+  }
+
   public void execute() {
     try {
       for (File tempFile : getFileList()) {
@@ -93,19 +111,7 @@ public class ExcelFile {
           BufferedReader br = new BufferedReader(new java.io.FileReader(excelSheet.getFilePath()));
           String line = null;
 
-          /* line checker */
-          try {
-            Class c = Class.forName("com.company.entity." + lineReader.getTableName());
-
-            Field[] classField = c.getDeclaredFields();
-
-            for(int i = 0; i < classField.length; i++) {
-              String fieldString = classField[i].toString();
-              fields.add(fieldString.substring(fieldString.lastIndexOf(".")).replace(".", ""));
-            }
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+          extractFields(lineReader.getTableName());
 
           /* Read codes line by line */
           while ((line = br.readLine()) != null) {
@@ -115,7 +121,12 @@ public class ExcelFile {
                 line = line.replace(" ", "");
                 lineReader.caseElse(line);
               } else {
-                if(fields.contains(lineReader.getColumnName())){
+                String[] dataTypeAndcolumnName = line.split(" ");
+                List<String> list = new ArrayList<String>(Arrays.asList(dataTypeAndcolumnName));
+                list.removeAll(Arrays.asList(""));
+                dataTypeAndcolumnName = list.toArray(dataTypeAndcolumnName);
+
+                if(fields.contains(dataTypeAndcolumnName[2].replace(";", ""))){
                   tableData.pushRowData(lineReader.casePrivate(line));
                 }
                 continue;
