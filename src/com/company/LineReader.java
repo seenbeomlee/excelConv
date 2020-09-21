@@ -27,14 +27,14 @@ public class LineReader {
   LineReader() {
   }
 
-  LineReader(String fileName) throws Exception {
+  LineReader(String fileName, String classPath) throws Exception {
     try {
       tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
       tableKName = "";
       fields = new ArrayList<String>();
       /* blockInit elements */
       blockInit();
-      extractFields();
+      extractFields(classPath);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -53,10 +53,9 @@ public class LineReader {
     FK = "";
   }
 
-<<<<<<< HEAD
-  public void extractFields() {
+  public void extractFields(String classPath) {
     try {
-      Class c = Class.forName("com.company.entity." + tableName);
+      Class c = Class.forName(classPath + "." + tableName);
 
       Field[] classField = c.getDeclaredFields();
 
@@ -86,18 +85,6 @@ public class LineReader {
       /* return RowData and push it to TableData's List<RowData> Rows */
       RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
 
-=======
-  public RowData casePrivate(String line) throws Exception {
-    try {
-      String dataTypeAndcolumnName = StringUtils.substringBetween(line, "private ", ";");
-
-      dataType = dataTypeAndcolumnName.substring(0, dataTypeAndcolumnName.indexOf(" "));
-      columnName = dataTypeAndcolumnName.substring(dataTypeAndcolumnName.indexOf(" "));
-
-      /* return RowData and push it to TableData's List<RowData> Rows */
-      RowData rowData = new RowData(tableName, tableKName, columnName, columnKName, isNull, dataType, length, PK, FK);
-
->>>>>>> 48237918ed15f8e6e0eb00df65f7b4d5dae51fb0
       blockInit();
       return rowData;
     } catch (Exception e) {

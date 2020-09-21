@@ -92,7 +92,9 @@ public class ExcelFile {
           excelSheet.createTitle(xssfWb);
 
           /* for Read Lines */
-          LineReader lineReader = new LineReader(excelSheet.getFileName());
+          String classPath = projectPath.split("src\\\\")[1].replace("\\", ".");
+
+          LineReader lineReader = new LineReader(excelSheet.getFileName(), classPath);
           BufferedReader br = new BufferedReader(new java.io.FileReader(excelSheet.getFilePath()));
           String line = null;
 
