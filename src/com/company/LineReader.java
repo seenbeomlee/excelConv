@@ -27,14 +27,14 @@ public class LineReader {
   LineReader() {
   }
 
-  LineReader(String fileName) throws Exception {
+  LineReader(String fileName, String classPath) throws Exception {
     try {
       tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
       tableKName = "";
       fields = new ArrayList<String>();
       /* blockInit elements */
       blockInit();
-      extractFields();
+      extractFields(classPath);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -53,9 +53,9 @@ public class LineReader {
     FK = "";
   }
 
-  public void extractFields() {
+  public void extractFields(String classPath) {
     try {
-      Class c = Class.forName("com.company.entity." + tableName);
+      Class c = Class.forName(classPath + "." + tableName);
 
       Field[] classField = c.getDeclaredFields();
 
