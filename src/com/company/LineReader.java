@@ -1,4 +1,4 @@
-package com.company;
+package excel;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,16 +28,12 @@ public class LineReader {
   }
 
   LineReader(String fileName, String classPath) throws Exception {
-    try {
       tableName = fileName.substring(0, fileName.indexOf(".java")); // 테이블명
       tableKName = "";
       fields = new ArrayList<String>();
       /* blockInit elements */
       blockInit();
       extractFields(classPath);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
   public String getTableName() { return tableName; }
@@ -53,18 +49,14 @@ public class LineReader {
     FK = "";
   }
 
-  public void extractFields(String classPath) {
-    try {
-      Class c = Class.forName(classPath + "." + tableName);
+  public void extractFields(String classPath) throws Exception {
+    Class c = Class.forName(classPath + "." + tableName);
 
-      Field[] classField = c.getDeclaredFields();
+    Field[] classField = c.getDeclaredFields();
 
-      for(int i = 0; i < classField.length; i++) {
-        String fieldString = classField[i].toString();
-        fields.add(fieldString.substring(fieldString.lastIndexOf(".")).replace(".", ""));
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    for(int i = 0; i < classField.length; i++) {
+      String fieldString = classField[i].toString();
+      fields.add(fieldString.substring(fieldString.lastIndexOf(".")).replace(".", ""));
     }
   }
 
@@ -110,7 +102,7 @@ public class LineReader {
           break;
         }
         case "@Column": {
-          if (line.contains("@Column(nullable=false)")) isNull = "N";
+          if (line.contains("nullable=false")) isNull = "N";
           break;
         }
         case "@Length": {

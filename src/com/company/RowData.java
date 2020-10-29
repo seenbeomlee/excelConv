@@ -1,4 +1,4 @@
-package com.company;
+package excel;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;

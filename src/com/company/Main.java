@@ -1,4 +1,4 @@
-package com.company;
+package excel;
 
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -16,7 +16,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
         try {
             String projectPath = args[0];
             if (projectPath.isEmpty()) {

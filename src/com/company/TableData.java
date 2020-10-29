@@ -1,4 +1,4 @@
-package com.company;
+package excel;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -34,7 +34,6 @@ public class TableData {
   }
 
   private void printHeaders(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) throws Exception {
-    try {
       /* 테이블 헤더 스타일 설정 */
       CellStyle cellStyle_Header = xssfWb.createCellStyle();
       cellStyle_Header.setBorderTop(BorderStyle.THIN); //테두리 위쪽
@@ -49,13 +48,9 @@ public class TableData {
         xssfCell.setCellStyle(cellStyle_Header);
         xssfCell.setCellValue(headers[i]);
       }
-    } catch (Exception e) {
-      throw new Exception(e);
-    }
   }
 
   private void printBody(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) throws Exception {
-    try {
       /* 셀 병합 (테이블 명, 테이블 한글명을 위한) */
       xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + rows.size() - 2, 0, 0));
       xssfSheet.addMergedRegion(new CellRangeAddress(rowNo - 1, rowNo + rows.size() - 2, 1, 1));
@@ -77,9 +72,6 @@ public class TableData {
           throw new Exception(row.toString(), e);
         }
       }
-    } catch (Exception e) {
-      throw new Exception(e);
-    }
   }
 
   public void printExcel(XSSFWorkbook xssfWb, XSSFSheet xssfSheet, XSSFRow xssfRow, XSSFCell xssfCell) throws Exception {

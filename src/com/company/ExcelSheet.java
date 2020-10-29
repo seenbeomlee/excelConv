@@ -1,4 +1,4 @@
-package com.company;
+package excel;
 
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -58,7 +58,6 @@ public class ExcelSheet {
   }
 
   public void initExcelSheet(XSSFWorkbook xssfWb) throws Exception {
-    try {
       /* 워크시트 이름 if inside of 'for' then make it => "xxx.java" if not => "FMS Table"*/
       xssfSheet = xssfWb.createSheet(fileName);
       /* 워크시트 Column size 조절 */
@@ -67,13 +66,9 @@ public class ExcelSheet {
       xssfSheet.setColumnWidth(2, (xssfSheet.getColumnWidth(2)) + (short) 4096); // 2번째 컬럼(컬럼명) 넓이 조절
       xssfSheet.setColumnWidth(3, (xssfSheet.getColumnWidth(3)) + (short) 4096); // 3번째 컬럼(컬럼 한글명) 넓이
       xssfSheet.setColumnWidth(5, (xssfSheet.getColumnWidth(5)) + (short) 2048); // 5번째 컬럼(데이터 타입) 넓이
-    } catch (Exception e) {
-      throw new Exception(e);
-    }
   }
 
-  public void createTitle(XSSFWorkbook xssfWb) throws Exception {
-    try {
+  public void createTitle(XSSFWorkbook xssfWb, String fileName) throws Exception {
       /* 타이틀용 폰트 스타일 */
       XSSFFont font = xssfWb.createFont();
       font.setFontName(HSSFFont.FONT_ARIAL); //폰트스타일
@@ -91,9 +86,6 @@ public class ExcelSheet {
       xssfRow = xssfSheet.createRow(0); //0번째 row에 행 객체 추가
       xssfCell = xssfRow.createCell((short) 0); // 추가한 행에 셀 객체 추가
       xssfCell.setCellStyle(cellStyle_Title); // 셀에 스타일 지정
-      xssfCell.setCellValue("FMS Table Definition"); // 데이터 입력
-    } catch (Exception e) {
-      throw new Exception(e);
-    }
+      xssfCell.setCellValue(fileName + " Table Definition"); // 데이터 입력
   }
 }

@@ -1,13 +1,11 @@
-package com.company;
+package excel;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.lang.reflect.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ExcelFile {
   private String projectPath;
@@ -22,7 +20,7 @@ public class ExcelFile {
 
   private File dirFile;
   private File file;
-  private File[] fileList;
+  private List<File> fileList;
 
   private FileOutputStream fos;
 
@@ -45,14 +43,14 @@ public class ExcelFile {
     xssfWb = new XSSFWorkbook();
 
     /* excel 파일 이름 */
-    excelFileName = "FMS";
+    excelFileName = projectPath.split("autocrypt.")[1].split("\\\\")[0];
 
     dirFile = new File(this.projectPath); // projectPath == Entity folder
-    fileList = dirFile.listFiles();// fileLists, inside of Entity folder
+    fileList = Arrays.asList(dirFile.listFiles());// fileLists, inside of Entity folder
   }
 
-  public File[] getFileList() {
-    return fileList;
+  public List<File> getFileList() {
+    return Objects.isNull(fileList) ? Collections.EMPTY_LIST : fileList;
   }
 
   public XSSFWorkbook getXssfWb() {
@@ -61,38 +59,34 @@ public class ExcelFile {
 
   public String getPackagePath() { return packagePath; }
 
+  public String getExcelFileName() { return excelFileName; }
+
   public void saveExcelFile() throws IOException {
 
-      /* save it to localFile and close it */
-      localFile = projectPath + "\\" + excelFileName + ".xlsx";
-      file = new File(localFile);
-      fos = null;
-      fos = new FileOutputStream(file);
-      xssfWb.write(fos);
-      if (xssfWb != null) xssfWb.close();
-      if (fos != null) fos.close();
+    /* save it to localFile and close it */
+    localFile = projectPath + "\\" + excelFileName + ".xlsx";
+    file = new File(localFile);
+    fos = null;
+    fos = new FileOutputStream(file);
+    xssfWb.write(fos);
+    if (xssfWb != null) xssfWb.close();
+    if (fos != null) fos.close();
   }
 
-  public void execute() {
-    try {
-      for (File tempFile : getFileList()) {
-        if(tempFile == null) {
-          throw new Exception();
-        }
+  public void execute() throws Exception {
+    for (File tempFile : getFileList()) {
+      try {
         if (tempFile.isFile()) {
-          if(tempFile == null) {
-            throw new FileNotFoundException();
-          }
 
           ExcelSheet excelSheet = new ExcelSheet(tempFile);
           TableData tableData = new TableData();
 
           /* Set excelSheet */
           excelSheet.initExcelSheet(xssfWb);
-          excelSheet.createTitle(xssfWb);
+          excelSheet.createTitle(xssfWb, getExcelFileName());
 
           /* for Read Lines */
-          String classPath = projectPath.split("src\\\\")[1].replace("\\", ".");
+          String classPath = projectPath.split("java\\\\")[1].replace("\\", ".");
 
           LineReader lineReader = new LineReader(excelSheet.getFileName(), classPath);
           BufferedReader br = new BufferedReader(new java.io.FileReader(excelSheet.getFilePath()));
@@ -106,12 +100,11 @@ public class ExcelFile {
                 line = line.replace(" ", "");
                 lineReader.caseElse(line);
               } else {
-                  tableData.pushRowData(lineReader.caseCheckFields(line));
+                tableData.pushRowData(lineReader.caseCheckFields(line));
                 continue;
               }
-            } catch(Exception e) {
+            } catch (Exception e) {
               e.printStackTrace();
-              throw new Exception(line, e);
             }
           }
           br.close();
@@ -119,10 +112,10 @@ public class ExcelFile {
           /* write Data to excelFormat */
           tableData.printExcel(getXssfWb(), excelSheet.getXssfSheet(), excelSheet.getXssfRow(), excelSheet.getXssfCell());
         }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-      saveExcelFile();
-    } catch (Exception e) {
-      e.printStackTrace();
     }
+    saveExcelFile();
   }
 }
